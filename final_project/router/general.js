@@ -4,7 +4,6 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
 public_users.post("/register", (req,res) => {
   if (!req.body.password || !req.body.username) {
     return res.status(404).json({message: "Invalid username or password"})
@@ -55,8 +54,76 @@ public_users.get('/title/:title',function (req, res) {
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   const isbn = req.params.isbn
-  // books[isbn]['review']
   return res.json(books[isbn]['reviews'])
 });
+
+
+async function getBooksAsync() {
+  let promise = new Promise((resolve, reject) => {
+    resolve(books)
+  });
+
+  const books = await promise();
+
+  //or
+
+  // promise().then((data) => {
+  //   console.log("Books: ", books)
+  // })
+}
+
+async function getBookByISBNAsync(isbn) {
+  let promise = new Promise((resolve, reject) => {
+    resolve(books[isbn])
+  });
+
+  const books = await promise();
+
+  //or
+
+  // promise().then((data) => {
+  //   console.log("Books: ", books)
+  // })
+}
+
+async function getBooksDetailsByAuthorAsync(author) {
+  let promise = new Promise((resolve, reject) => {
+    const booksList = {}
+    for( key in books) {
+      if(books[key]['author'] === author) {
+        booksList[key] = books[key]
+      }
+    }
+    resolve(booksList)
+  });
+
+  const books = await promise();
+
+  // or
+
+  // promise().then((data) => {
+  //   console.log("Books: ", books)
+  // })
+}
+
+async function getBooksDetailsByTitleAsync(title) {
+  let promise = new Promise((resolve, reject) => {
+    const booksList = {}
+    for( key in books) {
+      if(books[key]['title'] === title) {
+        booksList[key] = books[key]
+      }
+    }
+    resolve(booksList);
+  });
+
+  const books = await promise();
+
+  //or
+
+  // promise().then((data) => {
+  //   console.log("Books: ", books)
+  // })
+}
 
 module.exports.general = public_users;
